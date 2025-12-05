@@ -4,18 +4,24 @@ namespace AdventOfCode2025;
 
 public static class Day5
 {
-	struct IntRange(long low, long high) : IEquatable<IntRange>
+	class IntRange(ulong low, ulong high)
 	{
-		public readonly long Low = low;
-		public readonly long High = high;
+		public ulong Low = low;
+		public ulong High = high;
 
-		public bool Contains(long val) => val >= Low && val <= High;
+		public IntRange(IntRange range) : this(range.Low, range.High)
+		{
+		}
+
+		public bool Contains(ulong val) => val >= Low && val <= High;
 		
-		public bool Equals(IntRange other) => Low == other.Low && High == other.High;
+		public bool Overlaps(IntRange other) => Contains(other.Low) || Contains(other.High) || other.Contains(Low) || other.Contains(High);
 
-		public override bool Equals(object? obj) => obj is IntRange other && Equals(other);
-
-		public override int GetHashCode() => HashCode.Combine(Low, High);
+		public void Extend(IntRange other)
+		{
+			Low = Math.Min(Low, other.Low);
+			High = Math.Max(High, other.High);
+		}
 	}
 	
 	public static void Run()
@@ -24,7 +30,7 @@ public static class Day5
 		string[] ingredientsInfo = File.ReadAllLines($"Day5/Ingredients.txt");
 		var splitFound = false;
 		List<IntRange> fresh = new();
-		List<long> ingredients = new();
+		List<ulong> ingredients = new();
 		foreach (string line in ingredientsInfo)
 		{
 			if(string.IsNullOrEmpty(line))
@@ -36,7 +42,7 @@ public static class Day5
 			if(!splitFound)
 				AddRanges(line, fresh);
 			else
-				ingredients.Add(Int64.Parse(line));
+				ingredients.Add(ulong.Parse(line));
 		}
 		
 		var sum = Part2.Run(fresh);
@@ -46,16 +52,16 @@ public static class Day5
 	static void AddRanges(string range, List<IntRange> fresh)
 	{
 		var split = range.Split('-');
-		var low = Int64.Parse(split[0]);
-		var high = Int64.Parse(split[1]);
+		var low = ulong.Parse(split[0]);
+		var high = ulong.Parse(split[1]);
 		fresh.Add(new IntRange(low, high));
 	}
 
 	class Part1
 	{
-		public static long Run(List<IntRange> fresh, List<long> ingredients)
+		public static ulong Run(List<IntRange> fresh, List<ulong> ingredients)
 		{
-			long sum = 0;
+			ulong sum = 0;
 
 			foreach (var val in ingredients)
 			{
@@ -76,34 +82,36 @@ public static class Day5
 	
 	class Part2
 	{
-		public static long Run(List<IntRange> fresh)
+		public static ulong Run(List<IntRange> fresh)
 		{
-			long sum = 0;
+			ulong sum = 0;
 
-			List<IntRange> checkedRanges = new();
-			foreach (var range in fresh)
+			fresh = fresh.OrderBy(x => x.Low).ToList();
+			for (int i = 0; i < fresh.Count; i++)
 			{
-				for (long value = range.Low; value <= range.High; value++)
+				IntRange current = fresh[i];
+				for (int j = 0; j < fresh.Count; )
 				{
-					if(!IsInOtherRange(value, checkedRanges))
-						sum += 1;
+					IntRange other = fresh[j];
+					if(current != other && current.Overlaps(other))
+					{
+						current.Extend(other);
+						fresh.RemoveAt(j);
+					}
+					else
+					{
+						j += 1;
+					}
 				}
-
-				checkedRanges.Add(range);
 			}
-			
-			return sum;
-		}
 
-		static bool IsInOtherRange(long value, List<IntRange> fresh)
-		{
-			foreach (IntRange freshRange in fresh)
+			foreach (var range in fresh.OrderBy(x => x.Low))
 			{
-				if(freshRange.Contains(value))
-					return true;
+				Console.WriteLine($"{range.Low}-{range.High}");
+				sum += range.High - range.Low + 1;
 			}
 
-			return false;
+			return sum;
 		}
 	}
 }

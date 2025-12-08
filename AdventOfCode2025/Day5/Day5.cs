@@ -90,26 +90,20 @@ public static class Day5
 			for (int i = 0; i < fresh.Count; i++)
 			{
 				IntRange current = fresh[i];
-				for (int j = 0; j < fresh.Count; )
+				for (int j = i; j < fresh.Count; j++)
 				{
 					IntRange other = fresh[j];
-					if(current != other && current.Overlaps(other))
-					{
-						current.Extend(other);
-						fresh.RemoveAt(j);
-					}
-					else
-					{
-						j += 1;
-					}
+					if(current == other || !current.Overlaps(other))
+						continue;
+					
+					current.Extend(other);
+					fresh.RemoveAt(j);
+					j -= 1;
 				}
 			}
 
-			foreach (var range in fresh.OrderBy(x => x.Low))
-			{
-				Console.WriteLine($"{range.Low}-{range.High}");
+			foreach (var range in fresh)
 				sum += range.High - range.Low + 1;
-			}
 
 			return sum;
 		}

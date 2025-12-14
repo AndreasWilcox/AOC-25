@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace AdventOfCode2025;
 
-public static class Day8_shit
+public static class Day8
 {
 	struct Vector3(int x, int y, int z) : IEquatable<Vector3>
 	{

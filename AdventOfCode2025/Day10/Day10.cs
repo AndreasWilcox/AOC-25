@@ -70,7 +70,8 @@ public static class Day10
 
 			while (true)
 			{
-				states.Sort((x, y) => (x.Count-y.Count)*1000 + (x.StateDiff(machine.JoltageDiagram) - y.StateDiff(machine.JoltageDiagram)));
+				
+				/*states.Sort((x, y) => x.Count-y.Count + (x.StateDiff(machine.JoltageDiagram) - y.StateDiff(machine.JoltageDiagram)));
 				var state = states[0];
 				states.RemoveAt(0);
 				foreach (JoltageState modified in machine.Buttons.Select(button => state.Modify(button)))
@@ -86,7 +87,7 @@ public static class Day10
 						continue;
 					
 					states.Add(modified);
-				}
+				}*/
 			}
 		}
 	}

@@ -4,42 +4,33 @@ namespace AdventOfCode2025;
 
 public static class Day8
 {
-	struct Vector3(int x, int y, int z) : IEquatable<Vector3>
+	class Circuits
 	{
-		public int X = x, Y = y, Z = z;
-
-		public Vector3(List<int> list) : this(list[0], list[1], list[2])
-		{
-		}
-
-		public double DistanceSquared(Vector3 other) => Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2) + Math.Pow(Z - other.Z, 2);
-		public override string ToString() => $"({X}, {Y}, {Z})";
-
-		public bool Equals(Vector3 other) => X == other.X && Y == other.Y && Z == other.Z;
-		public override bool Equals(object? obj) => obj is Vector3 other && Equals(other);
-		public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+		public List<int> Connected;
+		public List<int> Sizes;
+		public long Part2;
 	}
-	
+
 	public static void Run()
 	{
 		Console.WriteLine("Day 8!");
 		var lines = File.ReadAllLines($"Day8/Junctions.txt");
 		var junctions = lines.Select(x => new Vector3(x.Split(',').Select(int.Parse).ToList())).ToList();
-		
-		var sum = Part1.Run(junctions);
-		Console.WriteLine($"Finished part 1, password is {sum}");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(junctions)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(junctions)}");
 	}
 
 	class Part1
 	{
 		public static long Run(List<Vector3> junctionPositions)
 		{
-			var junctions = GetConnectedJunctions(junctionPositions, 1000);
+			var circuits = GetConnectedCircuits(junctionPositions, 1000);
 
-			return junctions
-				.OrderByDescending(x => x.CountTreeSize())
+			return circuits.Sizes.Select(x => (long)x)
+				.OrderByDescending(x => x)
 				.Take(3)
-				.Aggregate<Junction, long>(1, (current, x) => current * x.CountTreeSize());
+				.Aggregate<long, long>(1, (current, x) => current * x);
 		}
 	}
 	
@@ -47,70 +38,56 @@ public static class Day8
 	{
 		public static long Run(List<Vector3> junctionPositions)
 		{
-			long sum = 0;
-
-			var junction = GetConnectedJunctions(junctionPositions, int.MaxValue).Single();
-
-			return junction.Position.X * junction.GetLastConnection().Position.X;
+			var circuits = GetConnectedCircuits(junctionPositions, int.MaxValue);
+			return circuits.Part2;
 		}
 	}
 
-	static List<Junction> GetConnectedJunctions(List<Vector3> junctionPositions, int tries)
+	static Circuits GetConnectedCircuits(List<Vector3> junctionPositions, int tries)
 	{
-		var junctions = junctionPositions.Select(x => new Junction(x)).ToList();
-		var edges = junctions.SelectMany(
-				(j1, i) => junctions
+		var edges = junctionPositions.SelectMany(
+				(c1, i) => junctionPositions
 					.Skip(i + 1)
-					.Select(j2 => new Tuple<Junction, Junction, double>(j1, j2, j2.DistanceSquared(j1))))
+					.Select((c2, j) => new Tuple<int, int, double>(i, i + j + 1, c2.DistanceSquared(c1))))
 			.OrderBy(x => x.Item3)
 			.Take(tries)
 			.ToList();
 
-		var merges = 0;
-		foreach(var edge in edges.TakeWhile(edge => merges != tries && junctions.Count != 1))
+		var c = new Circuits
 		{
-			merges += 1;
-			if(edge.Item1.IsConnectedTo(edge.Item2))
+			Connected = Enumerable.Range(0, junctionPositions.Count).ToList(),
+			Sizes = Enumerable.Repeat(1, junctionPositions.Count).ToList()
+		};
+		var mergeAttempts = 0;
+		var groupsLeft = junctionPositions.Count;
+		foreach(var edge in edges.TakeWhile(_ => mergeAttempts != tries))
+		{
+			mergeAttempts += 1;
+			var a = FindSet(c, edge.Item1);
+			var b = FindSet(c, edge.Item2);
+			if(a == b)
 				continue;
+			if(c.Sizes[a] < c.Sizes[b])
+				(a, b) = (b, a);
 
-			junctions.Remove(edge.Item2);
-			foreach (var junction in junctions.ToList())
+			c.Connected[b] = a;
+			c.Sizes[a] += c.Sizes[b];
+
+			groupsLeft -= 1;
+			if(groupsLeft == 1)
 			{
-				if(junction.IsConnectedTo(edge.Item2))
-					junctions.Remove(junction);
+				c.Part2 = junctionPositions[edge.Item1].X * junctionPositions[edge.Item2].X;
+				break;
 			}
-				
-			edge.Item1.Merge(edge.Item2);
-			edge.Item2.Merge(edge.Item1);
 		}
 
-		junctions = junctions.OrderByDescending(x => x.CountTreeSize()).ToList();
-		foreach(var junction in junctions)
-		{
-			Console.WriteLine($"Circuit: {junction.CountTreeSize()}");
-		}
-
-		return junctions;
+		return c;
 	}
 
-	class Junction(Vector3 position)
+	static int FindSet(Circuits c, int item)
 	{
-		public Vector3 Position = position;
-		readonly List<Junction> connections = [];
-
-		public bool IsConnectedTo(Junction other) => IsConnectedTo(other, this);
-		bool IsConnectedTo(Junction junction, Junction previous)
-		{
-			if(connections.Contains(junction))
-				return true;
-			return connections.Any(x => x != previous && x.IsConnectedTo(junction, this));
-		}
-
-		public int CountTreeSize() => CountJunctions(this);
-		int CountJunctions(Junction previous) => 1 + connections.Where(connection => connection != previous).Sum(connection => connection.CountJunctions(this));
-			
-		public double DistanceSquared(Junction other) => Position.DistanceSquared(other.Position);
-		public void Merge(Junction other) => connections.Add(other);
-		public Junction GetLastConnection() => connections.Last();
+		if(item == c.Connected[item])
+			return item;
+		return c.Connected[item] = FindSet(c, c.Connected[item]);
 	}
 }

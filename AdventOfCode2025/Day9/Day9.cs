@@ -65,7 +65,6 @@ public static class Day9
 				if(AnyLinesCollideSHOULDBEWRONG(areaLines, option.Item1, option.Item2))
 					continue;
 
-				Console.WriteLine($"Found between {option.Item1} and {option.Item2} with size {option.Item3}");
 				return (long)option.Item3;
 			}
 
@@ -74,26 +73,7 @@ public static class Day9
 
 		static bool AnyLinesCollideSHOULDBEWRONG(List<Line> areaLines, IntVector2 rectStart, IntVector2 rectEnd)
 		{
-			//var rectPoints = GenerateRectanglePoints(rectStart, rectEnd).ToList();
-			foreach(var area in areaLines)
-			{
-				if(Intersects(rectStart, rectEnd, area))
-					return true;
-			}
-
-			return false;
-		}
-
-		static bool AnyLinesCollide(List<Line> areaLines, IntVector2 rectStart, IntVector2 rectEnd)
-		{
-			var rectPoints = GenerateRectanglePoints(rectStart, rectEnd).ToList();
-			foreach(var area in areaLines)
-			{
-				if(rectPoints.Any(x => PointToTheLeftOfLine(x, area)))
-					return true;
-			}
-
-			return false;
+			return areaLines.Any(area => Intersects(rectStart, rectEnd, area));
 		}
 
 		static bool Intersects(IntVector2 rectStart, IntVector2 rectEnd, Line areaLine)
@@ -109,6 +89,18 @@ public static class Day9
 			var rMaxY = Math.Max(rectStart.Y, rectEnd.Y);
 
 			return rMinX < lMaxX && rMaxX > lMinX && rMinY < lMaxY && rMaxY > lMinY;
+		}
+
+		static bool AnyLinesCollide(List<Line> areaLines, IntVector2 rectStart, IntVector2 rectEnd)
+		{
+			var rectPoints = GenerateRectanglePoints(rectStart, rectEnd).ToList();
+			foreach(var area in areaLines)
+			{
+				if(rectPoints.Any(x => PointToTheLeftOfLine(x, area)))
+					return true;
+			}
+
+			return false;
 		}
 
 		static bool PointToTheLeftOfLine(IntVector2 point, Line line)

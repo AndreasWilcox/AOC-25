@@ -47,48 +47,63 @@ public static class Day11
 	class Part2
 	{
 		static Devices devices;
+		static Dictionary<string, List<Path>> cache = new();
 
 		public static long Run(Devices devices)
 		{
 			Part2.devices = devices;
-			return FindAllPaths("svr", new Path(["svr"])).Count(path => path.Contains("fft") && path.Contains("dac"));
+			return FindAllPaths("svr").Count(path => path.Contains("fft") && path.Contains("dac"));
 		}
 
-		static List<Path> FindAllPaths(Path path, string current)
+		static IEnumerable<Path> FindAllPaths(string current)
 		{
+			var currentPath = new Path().AddFront(current);
 			if(current == "out")
-				return [new Path([current])];
+			{
+				yield return currentPath;
+				yield break;
+			}
 
-			//var existingPath = FindCachedPath(current);
-			//if(existingPath != null)
-			//return [path.Concat(existingPath).ToList()];
+			var cachedPaths = FindCachedPaths(current);
+			if(cachedPaths != null)
+			{
+				foreach (Path path in cachedPaths)
+					yield return path.Copy().AddFront(current);
+				yield break;
+			}
 
-			var paths = devices.GetConnections(current).SelectMany(x => FindAllPaths(path, x));
+			var paths = devices.GetConnections(current).SelectMany(FindAllPaths);
 
 			foreach(var finishedPath in paths)
 			{
-				CachePath(finishedPath);
+				var path = finishedPath.Copy().AddFront(current);
+				CachePath(current, path);
+				yield return path;
 			}
 		}
 
-		static void CachePath(List<string> path)
+		static void CachePath(string current, Path path)
 		{
+			if(!cache.ContainsKey(current))
+				cache.Add(current, []);
+			cache[current].Add(path);
 		}
 
-		static List<string> FindCachedPath(string current)
+		static List<Path>? FindCachedPaths(string current) => cache.GetValueOrDefault(current);
+
+		class Path
 		{
-			throw new NotImplementedException();
-		}
+			List<Path> paths = new();
 
-		class Path(List<string> list)
-		{
-			List<string> path = list;
+			public bool Contains(string machine) => paths.Contains(machine);
 
-			public bool Contains(string machine) => path.Contains(machine);
+			public Path AddFront(string current)
+			{
+				paths.Insert(0, current);
+				return this;
+			}
 
-			public Path Concat(string machine) => new Path(path.Concat([machine]).ToList());
-
-			public bool SequenceEquals(Path other) => path.SequenceEqual(other.path);
+			public Path Copy() => new() { paths = paths.ToList() };
 		}
 	}
 }

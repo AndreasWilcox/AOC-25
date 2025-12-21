@@ -74,10 +74,10 @@
       <None Update="Day10\TestMachines.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Day11\Output.txt">
+      <None Update="Day11\TestOutput.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Day11\TestOutput.txt">
+      <None Update="Day12\TestShapes.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

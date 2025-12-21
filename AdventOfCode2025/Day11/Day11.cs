@@ -1,4 +1,6 @@
 
+using System.Text.RegularExpressions;
+
 namespace AdventOfCode2025;
 
 public static class Day11
@@ -11,6 +13,7 @@ public static class Day11
 
 		public List<string> GetConnections(string current) => devices[current];
 	}
+	
 	public static void Run()
 	{
 		Console.WriteLine("Day 11!");
@@ -46,64 +49,79 @@ public static class Day11
 
 	class Part2
 	{
+		static int SearchedFound;
+		static List<string> searchedMachines;
 		static Devices devices;
-		static Dictionary<string, List<Path>> cache = new();
+		static readonly Dictionary<(string, int), PathTree> cache = new();
 
 		public static long Run(Devices devices)
 		{
 			Part2.devices = devices;
-			return FindAllPaths("svr").Count(path => path.Contains("fft") && path.Contains("dac"));
+			searchedMachines = ["fft", "dac"];
+			SearchedFound = (1 << searchedMachines.Count) - 1;
+			var searchThroughPaths = SearchThroughPaths("svr", 0);
+			return searchThroughPaths.MatchedBranches;
 		}
 
-		static IEnumerable<Path> FindAllPaths(string current)
+		static PathTree SearchThroughPaths(string current, int found)
 		{
-			var currentPath = new Path().AddFront(current);
+			var currentPath = new PathTree(current);
 			if(current == "out")
 			{
-				yield return currentPath;
-				yield break;
+				currentPath.Branches = 1;
+				return currentPath;
 			}
 
-			var cachedPaths = FindCachedPaths(current);
-			if(cachedPaths != null)
-			{
-				foreach (Path path in cachedPaths)
-					yield return path.Copy().AddFront(current);
-				yield break;
-			}
+			found |= MatchSearched(current);
+			if(found == SearchedFound)
+				currentPath.FoundBoth = true;
+			
+			var cachedTree = FindCachedPathTree(current, found);
+			if(cachedTree != null)
+				return cachedTree;
 
-			var paths = devices.GetConnections(current).SelectMany(FindAllPaths);
+			var children = devices.GetConnections(current).Select(x => SearchThroughPaths(x, found));
 
-			foreach(var finishedPath in paths)
-			{
-				var path = finishedPath.Copy().AddFront(current);
-				CachePath(current, path);
-				yield return path;
-			}
+			foreach(var child in children)
+				currentPath.AddChildTree(child);
+			
+			return CachePath(current, found, currentPath);
 		}
 
-		static void CachePath(string current, Path path)
+		static int MatchSearched(string current)
 		{
-			if(!cache.ContainsKey(current))
-				cache.Add(current, []);
-			cache[current].Add(path);
-		}
-
-		static List<Path>? FindCachedPaths(string current) => cache.GetValueOrDefault(current);
-
-		class Path
-		{
-			List<Path> paths = new();
-
-			public bool Contains(string machine) => paths.Contains(machine);
-
-			public Path AddFront(string current)
+			for(var i = 0; i < searchedMachines.Count; i++)
 			{
-				paths.Insert(0, current);
-				return this;
+				var searchedMachine = searchedMachines[i];
+				if(searchedMachine == current)
+					return 1 << i;
 			}
 
-			public Path Copy() => new() { paths = paths.ToList() };
+			return 0;
+		}
+
+		static PathTree CachePath(string current, int found, PathTree child)
+		{
+			cache[(current, found)] = child;
+			return child;
+		}
+
+		static PathTree? FindCachedPathTree(string current, int found) => cache.GetValueOrDefault((current, found));
+
+		class PathTree(string current)
+		{
+			string name = current;
+			readonly List<PathTree> paths = [];
+			public long Branches;
+			public long MatchedBranches;
+			public bool FoundBoth;
+
+			public void AddChildTree(PathTree child)
+			{
+				paths.Add(child);
+				Branches += child.Branches;
+				MatchedBranches += FoundBoth ? child.Branches : child.MatchedBranches;
+			}
 		}
 	}
 }

@@ -17,10 +17,9 @@ public static class Day11
 	public static void Run()
 	{
 		Console.WriteLine("Day 11!");
-		var devices = ParseDevices(File.ReadAllLines($"Day11/Output.txt"));
-		
-		var sum = Part2.Run(devices);
-		Console.WriteLine($"Finished part 1, password is {sum}");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(ParseDevices(File.ReadAllLines($"Day11/TestOutput1.txt")))}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(ParseDevices(File.ReadAllLines($"Day11/TestOutput2.txt")))}");
 	}
 
 	static Devices ParseDevices(string[] lines)
@@ -35,7 +34,7 @@ public static class Day11
 		return devices;
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(Devices devices) => CountPaths(devices, "you");
 
@@ -47,7 +46,7 @@ public static class Day11
 		}
 	}
 
-	class Part2
+	static class Part2
 	{
 		static int SearchedFound;
 		static List<string> searchedMachines;

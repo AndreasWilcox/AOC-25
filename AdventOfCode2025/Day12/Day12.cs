@@ -6,10 +6,9 @@ public static class Day12
 	public static void Run()
 	{
 		Console.WriteLine("Day 12!");
-		var spaces = ParseSpaces(File.ReadAllLines($"Day12/Shapes.txt")).ToList();
+		var spaces = ParseSpaces(File.ReadAllLines($"Day12/TestShapes.txt")).ToList();
 
-		var sum = RunFull(spaces);
-		Console.WriteLine($"Finished, password is {sum}");
+		Console.WriteLine($"Finished, password is {RunFull(spaces)}");
 	}
 
 	static long RunFull(List<Space> spaces)

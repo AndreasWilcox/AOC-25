@@ -74,12 +74,19 @@
       <None Update="Day10\TestMachines.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Day11\TestOutput.txt">
+      <None Update="Day11\TestOutput2.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="Day12\TestShapes.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Day11\TestOutput1.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LpSolveDotNet.Native.win-x64" Version="4.1.0" />
     </ItemGroup>
 
 </Project>

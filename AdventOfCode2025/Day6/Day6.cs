@@ -5,15 +5,15 @@ public static class Day6
 	public static void Run()
 	{
 		Console.WriteLine("Day 6!");
-		string[] math = File.ReadAllLines($"Day6/Math.txt");
-		
-		var sum = Part2.Run(math);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+		string[] math = File.ReadAllLines($"Day6/TestMath.txt");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(math)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(math)}");
 	}
 
 	static long[] GetLineNumbers(string line) => line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(string[] math)
 		{
@@ -58,7 +58,7 @@ public static class Day6
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static long Run(string[] math)
 		{

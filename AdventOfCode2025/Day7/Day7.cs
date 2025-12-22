@@ -7,19 +7,19 @@ public static class Day7
 	public static void Run()
 	{
 		Console.WriteLine("Day 7!");
-		var mapLines = File.ReadAllLines($"Day7/Map.txt");
+		var mapLines = File.ReadAllLines($"Day7/TestMap.txt");
 		var map = new char[mapLines[0].Length, mapLines.Length];
 		for(var row = 0; row < mapLines.Length; row++)
 		{
 			for(var column = 0; column < mapLines[0].Length; column++)
 				map[column, row] = mapLines[row][column];
 		}
-		
-		var sum = Part2.Run(map);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(map)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(map)}");
 	}
 
-	class Part1
+	static class Part1
 	{
 		static char[,] readMap;
 		static char[,] writeMap;
@@ -101,7 +101,7 @@ public static class Day7
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		static char[,] readMap;
 		static List<TreeNode> toVisit = new();

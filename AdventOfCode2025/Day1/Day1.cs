@@ -7,9 +7,9 @@ public static class Day1
 	public static void Run()
 	{
 		Console.WriteLine("Day 1!");
-		string[] readAllLines = File.ReadAllLines("Day1/Rotations.txt");
+		string[] readAllLines = File.ReadAllLines("Day1/TestRotations.txt");
 
-		//Method1(readAllLines);
+		Method1(readAllLines);
 		Method2(readAllLines);
 	}
 
@@ -64,7 +64,7 @@ public static class Day1
 
 			num = (newNum + 100) % 100;
 
-			Console.WriteLine($"[{i + 1}] {change}, {oldNum} to {num}. Count {count}");
+			//Console.WriteLine($"[{i + 1}] {change}, {oldNum} to {num}. Count {count}");
 		}
 
 		Console.WriteLine($"Finished part 2, password is {count}");

@@ -7,10 +7,10 @@ public static class Day4
 	public static void Run()
 	{
 		Console.WriteLine("Day 4!");
-		string[] layoutLines = File.ReadAllLines($"Day4/Layout.txt");
+		string[] layoutLines = File.ReadAllLines($"Day4/TestLayout.txt");
 		var layout = CreateLayout(layoutLines);
-		var sum = Part2.Run(layout);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(layout)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(layout)}");
 	}
 
 	static int[,] CreateLayout(string[] layoutLines)
@@ -87,17 +87,17 @@ public static class Day4
 		return sum;
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(int[,] layout)
 		{
 			long sum = 0;
 			
-			PrintLayout(layout);
+			//PrintLayout(layout);
 
 			sum += CalculateSurrounding(layout);
 			
-			PrintLayout(layout);
+			//PrintLayout(layout);
 
 			return sum;
 		}
@@ -105,13 +105,13 @@ public static class Day4
 
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static long Run(int[,] layout)
 		{
 			long sum = 0;
 
-			PrintLayout(layout);
+			//PrintLayout(layout);
 
 			while(true)
 			{
@@ -127,7 +127,7 @@ public static class Day4
 				}
 			}
 			
-			PrintLayout(layout);
+			//PrintLayout(layout);
 
 			return sum;
 		}

@@ -5,12 +5,12 @@ public static class Day2
 	public static void Run()
 	{
 		Console.WriteLine("Day 2!");
-		string[] ranges = File.ReadAllLines("Day2/Ranges.txt");
-		var sum = Part2.Run(ranges);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+		string[] ranges = File.ReadAllLines("Day2/TestRanges.txt");
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(ranges)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(ranges)}");
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(string[] ranges)
 		{
@@ -27,7 +27,7 @@ public static class Day2
 					if(IsRepeating(num.ToString()))
 					{
 						sum += num;
-						Console.WriteLine($"{num} -> {sum}");
+						//Console.WriteLine($"{num} -> {sum}");
 					}
 				}
 			}
@@ -68,7 +68,7 @@ public static class Day2
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static long Run(string[] ranges)
 		{
@@ -85,7 +85,7 @@ public static class Day2
 					if(IsRepeating(num.ToString()))
 					{
 						sum += num;
-						Console.WriteLine($"{num} -> {sum}");
+						//Console.WriteLine($"{num} -> {sum}");
 					}
 				}
 			}

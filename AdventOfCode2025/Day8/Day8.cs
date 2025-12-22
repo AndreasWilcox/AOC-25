@@ -14,14 +14,14 @@ public static class Day8
 	public static void Run()
 	{
 		Console.WriteLine("Day 8!");
-		var lines = File.ReadAllLines($"Day8/Junctions.txt");
+		var lines = File.ReadAllLines($"Day8/TestJunctions.txt");
 		var junctions = lines.Select(x => new Vector3(x.Split(',').Select(int.Parse).ToList())).ToList();
 
 		Console.WriteLine($"Finished part 1, password is {Part1.Run(junctions)}");
 		Console.WriteLine($"Finished part 2, password is {Part2.Run(junctions)}");
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(List<Vector3> junctionPositions)
 		{
@@ -34,7 +34,7 @@ public static class Day8
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static long Run(List<Vector3> junctionPositions)
 		{

@@ -8,17 +8,17 @@ public static class Day9
 	public static void Run()
 	{
 		Console.WriteLine("Day 9!");
-		var tiles = File.ReadAllLines($"Day9/Tiles.txt")
+		var tiles = File.ReadAllLines($"Day9/TestTiles.txt")
 			.Select(IntVector2.Parse)
 			.ToList();
-		
-		var sum = Part2.Run(tiles);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(tiles)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(tiles)}");
 	}
 	
 	static long GetSize(IntVector2 a, IntVector2 b) => (long)(Math.Abs(a.X - b.X) + 1) * (Math.Abs(a.Y - b.Y) + 1);
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(List<IntVector2> tiles)
 		{
@@ -39,7 +39,7 @@ public static class Day9
 
 	}
 
-	class Part2
+	static class Part2
 	{
 		class Line(IntVector2 start, IntVector2 end)
 		{

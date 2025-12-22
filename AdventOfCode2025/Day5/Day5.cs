@@ -4,30 +4,10 @@ namespace AdventOfCode2025;
 
 public static class Day5
 {
-	class IntRange(ulong low, ulong high)
-	{
-		public ulong Low = low;
-		public ulong High = high;
-
-		public IntRange(IntRange range) : this(range.Low, range.High)
-		{
-		}
-
-		public bool Contains(ulong val) => val >= Low && val <= High;
-		
-		public bool Overlaps(IntRange other) => Contains(other.Low) || Contains(other.High) || other.Contains(Low) || other.Contains(High);
-
-		public void Extend(IntRange other)
-		{
-			Low = Math.Min(Low, other.Low);
-			High = Math.Max(High, other.High);
-		}
-	}
-	
 	public static void Run()
 	{
 		Console.WriteLine("Day 5!");
-		string[] ingredientsInfo = File.ReadAllLines($"Day5/Ingredients.txt");
+		string[] ingredientsInfo = File.ReadAllLines($"Day5/TestIngredients.txt");
 		var splitFound = false;
 		List<IntRange> fresh = new();
 		List<ulong> ingredients = new();
@@ -44,9 +24,9 @@ public static class Day5
 			else
 				ingredients.Add(ulong.Parse(line));
 		}
-		
-		var sum = Part2.Run(fresh);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(fresh, ingredients)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(fresh)}");
 	}
 
 	static void AddRanges(string range, List<IntRange> fresh)
@@ -57,7 +37,7 @@ public static class Day5
 		fresh.Add(new IntRange(low, high));
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static ulong Run(List<IntRange> fresh, List<ulong> ingredients)
 		{
@@ -70,7 +50,7 @@ public static class Day5
 					if(!range.Contains(val))
 						continue;
 					
-					Console.WriteLine($"{val} is fresh");
+					//Console.WriteLine($"{val} is fresh");
 					sum += 1;
 					break;
 				}
@@ -80,7 +60,7 @@ public static class Day5
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static ulong Run(List<IntRange> fresh)
 		{
@@ -106,6 +86,26 @@ public static class Day5
 				sum += range.High - range.Low + 1;
 
 			return sum;
+		}
+	}
+	
+	class IntRange(ulong low, ulong high)
+	{
+		public ulong Low = low;
+		public ulong High = high;
+
+		public IntRange(IntRange range) : this(range.Low, range.High)
+		{
+		}
+
+		public bool Contains(ulong val) => val >= Low && val <= High;
+		
+		public bool Overlaps(IntRange other) => Contains(other.Low) || Contains(other.High) || other.Contains(Low) || other.Contains(High);
+
+		public void Extend(IntRange other)
+		{
+			Low = Math.Min(Low, other.Low);
+			High = Math.Max(High, other.High);
 		}
 	}
 }

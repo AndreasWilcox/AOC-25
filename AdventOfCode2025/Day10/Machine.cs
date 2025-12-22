@@ -44,66 +44,11 @@ internal class LightState
 	public override int GetHashCode() => state.GetHashCode();
 }
 
-internal class JoltageState
-{
-	public int Count;
-	readonly int[] state;
-	
-	public JoltageState(int[] state)
-	{
-		this.state = state;
-	}
-
-	public JoltageState(int length)
-	{
-		state = new int[length];
-	}
-
-	JoltageState(JoltageState other)
-	{
-		Count = other.Count;
-		state = other.state.ToArray();
-	}
-
-	public int Length() => state.Length;
-
-	public JoltageState Modify(Button button)
-	{
-		var copy = new JoltageState(this);
-		foreach (int index in button.Numbers)
-			copy.state[index] += 1;
-		copy.Count += 1;
-		return copy;
-	}
-
-	public bool EqualsState(JoltageState other) => state.SequenceEqual(other.state);
-
-	public bool IsAnyTooHigh(JoltageState other)
-	{
-		for (int i = 0; i < state.Length; i++)
-		{
-			if(state[i] > other.state[i])
-				return true;
-		}
-		return false;
-	}
-
-	public int StateDiff(JoltageState targetState)
-	{
-		var sum = 0;
-		for (int i = 0; i < state.Length; i++)
-		{
-			sum += targetState.state[i] - state[i];
-		}
-		return sum;
-	}
-}
-
-internal class Machine(LightState lightsDiagram, List<Button> buttons, JoltageState joltageDiagram)
+internal class Machine(LightState lightsDiagram, List<Button> buttons, int[] joltageDiagram)
 {
 	public readonly LightState LightsDiagram = lightsDiagram;
 	public readonly List<Button> Buttons = buttons;
-	public readonly JoltageState JoltageDiagram = joltageDiagram;
+	public readonly int[] JoltageDiagram = joltageDiagram;
 }
 
 internal class Button(IEnumerable<int> numbers)

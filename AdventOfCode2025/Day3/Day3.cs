@@ -5,12 +5,12 @@ public static class Day3
 	public static void Run()
 	{
 		Console.WriteLine("Day 3!");
-		string[] batteries = File.ReadAllLines($"Day3/Batteries.txt");
-		var sum = Part2.Run(batteries);
-		Console.WriteLine($"Finished part 2, password is {sum}");
+		string[] batteries = File.ReadAllLines($"Day3/TestBatteries.txt");
+		Console.WriteLine($"Finished part 1, password is {Part1.Run(batteries)}");
+		Console.WriteLine($"Finished part 2, password is {Part2.Run(batteries)}");
 	}
 
-	class Part1
+	static class Part1
 	{
 		public static long Run(string[] batteries)
 		{
@@ -35,14 +35,14 @@ public static class Day3
 				}
 
 				sum += int.Parse($"{largest[0]}{largest[1]}");
-				Console.WriteLine($"{range} - {largest[0]}{largest[1]}");
+				//Console.WriteLine($"{range} - {largest[0]}{largest[1]}");
 			}
 
 			return sum;
 		}
 	}
 	
-	class Part2
+	static class Part2
 	{
 		public static long Run(string[] batteries)
 		{
@@ -69,7 +69,7 @@ public static class Day3
 
 				var sumLine = largest.Aggregate("", (current, i) => current + $"{i}");
 				sum += Int64.Parse(sumLine);
-				Console.WriteLine($"{range} - {sumLine}");
+				//Console.WriteLine($"{range} - {sumLine}");
 			}
 
 			return sum;;
